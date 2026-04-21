@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviveAI | ATML Analytics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --card-border: rgba(255, 255, 255, 0.4);
+            --accent-gradient: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            --accent-light: #fdf2f8;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        
+        .header h1 { 
+            margin: 0; 
+            font-size: 2.8rem; 
+            letter-spacing: -1px; 
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        
+        .header p { 
+            color: #334155; 
+            font-weight: 600; 
+            margin-top: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .control-panel, .card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 25px; 
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(31, 38, 135, 0.1); 
+            border: 1px solid var(--card-border);
+        }
+
+        .control-panel {
+            width: 100%; max-width: 800px;
+            margin-bottom: 30px; 
+        }
+        
+        input[type="file"], select {
+            display: block; width: 95%; padding: 12px; margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.9); 
+            border: 2px dashed #8b5cf6; 
+            border-radius: 8px; 
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-upload {
+            background: var(--accent-gradient); 
+            color: white; width: 100%;
+            border: none; padding: 15px; font-size: 1.1rem; font-weight: bold;
+            border-radius: 8px; cursor: pointer; transition: 0.3s ease;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+        }
+        .btn-upload:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.6);
+        }
+
+        .dashboard {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 20px;
+            max-width: 1200px; width: 100%;
+        }
+        
+        .card-title {
+            font-size: 1.2rem; font-weight: 800; margin-bottom: 15px;
+            padding-bottom: 10px; border-bottom: 2px solid rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            color: #1e293b;
+        }
+
+        .img-comparison { display: flex; justify-content: space-between; gap: 15px; }
+        .img-box { width: 50%; text-align: center; }
+        .img-box img { 
+            width: 100%; 
+            border-radius: 10px; 
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .img-box p { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-top: 10px;}
+
+        .metrics-list { list-style: none; padding: 0; margin: 0; }
+        .metrics-list li {
+            display: flex; justify-content: space-between;
+            padding: 14px 0; border-bottom: 1px dashed rgba(0,0,0,0.1); 
+            font-size: 0.95rem; font-weight: 600; color: var(--text-muted);
+        }
+        .metrics-list li:last-child { border: none; }
+        .metrics-value { 
+            font-family: monospace; 
+            font-size: 1.2rem; 
+            color: #db2777;
+            font-weight: 800;
+        }
+        
+        .badge-success {
+            font-size: 0.8rem; 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            padding: 4px 10px; 
+            border-radius: 12px; 
+            color: white;
+            box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+        }
+
+        .feedback-btns { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-rate {
+            flex: 1; padding: 12px; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: bold; font-size: 0.95rem; 
+            transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .btn-up { background: #10b981; color: white; }
+        .btn-down { background: #ef4444; color: white; }
+        .btn-rate:hover { transform: translateY(-2px); opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>ReviveAI Workspace</h1>
+        <p>Enterprise ATML Restoration & Analytics Pipeline</p>
+    </div>
+
+    <div class="control-panel">
+        <form action="/" method="POST" enctype="multipart/form-data">
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; margin-bottom:10px; font-weight:800; color: #4f46e5;">1. Select Restoration Architecture</label>
+                <select name="model_mode">
+                    <option value="unet_standard" {% if selected_mode == 'unet_standard' %}selected{% endif %}>Phase 1: Custom U-Net (Base 128x128 Tensor)</option>
+                    <option value="unet_sliding" {% if selected_mode == 'unet_sliding' %}selected{% endif %}>Phase 2: Custom U-Net (Sliding Window Patch Algorithm)</option>
+                    <option value="gfpgan" {% if selected_mode == 'gfpgan' %}selected{% endif %}>Phase 3: Pre-Trained GFPGAN (Ultra-HD Commercial Pipeline)</option>
+                </select>
+            </div>
+
+            <label style="display:block; margin-bottom:10px; font-weight:800; color: #4f46e5;">2. Upload Damaged Input (JPEG/PNG)</label>
+            <input type="file" name="file" accept="image/png, image/jpeg" required>
+            <button type="submit" class="btn-upload">Execute Tensor Inference ✨</button>
+        </form>
+    </div>
+
+    {% if original_img %}
+    <div class="dashboard">
+        <div class="card">
+            <div class="card-title">Inference Output 
+                <span class="badge-success">Success</span>
+            </div>
+            <div class="img-comparison">
+                <div class="img-box">
+                    <img src="{{ url_for('static', filename='uploads/' + original_img) }}" alt="Original">
+                    <p>Damaged Input Data</p>
+                </div>
+                <div class="img-box">
+                    <img src="{{ url_for('static', filename='uploads/' + restored_img) }}" alt="Restored">
+                    <p>Generated Latent Structure</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="card">
+                <div class="card-title">Explainable AI (XAI)</div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top:0;">Bottleneck Feature Map Activation</p>
+                <img style="width: 100%; border-radius: 8px; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" src="{{ url_for('static', filename='xai/' + xai_img) }}" alt="XAI Heatmap">
+            </div>
+
+            <div class="card">
+                <div class="card-title">Mathematical Telemetry</div>
+                <ul class="metrics-list">
+                    <li><span>Processing Latency</span> <span class="metrics-value">{{ time_taken }}s</span></li>
+                    <li><span>Input Dimensions</span> <span class="metrics-value">{{ dims }}</span></li>
+                    <li><span>SSIM Score (Structure)</span> <span class="metrics-value">{{ ssim }}</span></li>
+                    <li><span>PSNR Score (Noise)</span> <span class="metrics-value">{{ psnr }} dB</span></li>
+                </ul>
+
+                <div style="margin-top: 25px; border-top: 2px solid rgba(0,0,0,0.05); padding-top: 15px;">
+                    <p style="font-size: 0.9rem; font-weight: 800; margin: 0; color: #1e293b;">Continuous Learning: Rate Output</p>
+                    <div class="feedback-btns">
+                        <button class="btn-rate btn-up" onclick="submitRating('thumbs_up')">👍 Acceptable</button>
+                        <button class="btn-rate btn-down" onclick="submitRating('thumbs_down')">👎 Failed</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function submitRating(rating) {
+            fetch('/rate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: "{{ filename }}", rating: rating })
+            }).then(response => {
+                alert("Analytics Logged to CSV Database for Future Retraining.");
+            });
+        }
+    </script>
+    {% endif %}
+
+</body>
+</html>
